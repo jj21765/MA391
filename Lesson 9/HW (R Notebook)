@@ -1,0 +1,44 @@
+#number 1, a
+f=function(x){x[1]^2+x[2]^2}
+Aeq=matrix(c(1,2),nrow=1)
+Beq=matrix(c(5))
+A=matrix(c(-1,0,0,-1),nrow=2)
+B=matrix(c(0,0),nrow=1)
+solnl(x0,objfun=f,Aeq=Aeq,Beq=Beq,A=A,B=B)
+
+#b
+fun=function(x){(x[1]^2-x[2]^2)*(-1)}
+con=function(x){
+  fun=NULL
+  fun=rbind(fun,2*x[2]-x[1]^2)
+  return(list(ceq=fun,c=NULL))
+}
+A1=matrix(c(1,0,0,1),nrow=2)
+B1=matrix(c(0,0),nrow=2)
+x0=c(1,1)
+ans=solnl(x0,objfun=fun,confun=con)
+print(ans)
+
+#c
+funcMax=function(x){exp(-x[1]*x[2]/4)}
+con=function(x){
+  f=NULL
+  f=rbind(f,x[1]^2+x[2]^2-1)
+  return(list(ceq=f,c=NULL))
+}
+x0=c(0,1)
+ans=solnl(x0,objfun=funcMax,confun=con)
+print(ans)
+X=list(x=seq(-1,1),y=seq(-1,1))
+Z=Outer(funcMax,X)
+contour(X$x,X$y,Z)
+
+funcMin=function(x){(E^(-x[1]*x[2]/4))*(-1)}
+con=function(x){
+  funcMin=NULL
+  funcMin=rbind(funcMin,x[1]^2+x[2]^2-1)
+  return(list(ceq=funcMin,c=NULL))
+}
+x0=c(0,1)
+ans=solnl(x0,objfun=funcMin,confun=con)
+print(ans)
