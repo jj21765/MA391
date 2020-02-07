@@ -1,0 +1,70 @@
+#f(x,y)=xy-2x-2y-x^2-y^2
+f=function(x){(x[1]*x[2]-2*x[1]-2*x[2]-x[1]^2-x[2]^2)*(-1)}
+#multiply by -1 gets you the max (since the original gives min?)
+x=c(0,0)
+optim(x,f)
+
+Blue = function(x){(0.05*x[1]*(1-x[1]/150000)-1/100000000*x[1]*x[2])}
+Fin = function(x){(0.08*x[2]*(1-x[2]/400000)-1/100000000*x[1]*x[2])}
+
+Rev = function(x){(12*(0.05*x[1]*(1-x[1]/150000)-1/100000000*x[1]*x[2]) +
+                   6*(0.08*x[2]*(1-x[2]/400000)-1/100000000*x[1]*x[2]))*(-1)}
+  
+x=c(50000,50000)
+ans=optim(x,Rev,method="L-BFGS-B")
+print(ans$par) #gets parameters
+print(-ans$val)
+Blue(ans$par)
+Fin(ans$par)
+
+profit = function (x){
+  return((1500-100*x)*(1+.15*x))
+}
+x = seq(0,15,1)
+plot(x,profit(x),type="o")
+
+dProfit = function(x){fprime(profit,x)}
+bisection(dProfit,0,20)
+
+sales = seq(0.05,0.5,0.01)
+ans = 0
+ans.profit=0
+for (i in 1:length(sales)){
+  profit = function (x){
+    return((1500-100*x)*(1+sales[i]*x))
+  }
+  dProfit = function(x){fprime(profit,x)}
+  ans[i] = bisection(dProfit,-10,20)    
+  ans.profit[i]=profit(ans[i])
+}
+
+result = data.frame(salesIncrease=sales,optimalRebate=ans,profit=ans.profit)
+print(result)
+plot(sales,ans,"o",xlab="Sales Increase",ylab="x (# of rebates)")
+
+Blue(ans$par)
+Fin(ans$par)
+
+R2=function(x){
+  fr2=function(x){(12*(0.05*x[1]*(1-x[1]/150000)-1/100000000*x[1]*x[2]) +
+                  6*(r2*x[2]*(1-x[2]/400000)-1/100000000*x[1]*x[2]))*(-1)}
+  ##fr2 shosws whats optimized 
+  x=c(50000,50000)
+  ans=optim(x,fr2,method="L-BFGS-B")
+  return (ans)
+  #now we're ready to go through a for loop 
+}
+
+R2(0.08)
+ans.x1=0
+ans.x2= #putting a dot makes it a compl new variable
+ans.rev=0
+r=seq(.04,.12,.01)
+for (i in 1:length(r)){
+  ans=R2(r[i]))}
+  ans.x1[i]=ans$par[1]
+  ans.x2[i]=ans$par[2]
+  ans.rev[i]=ans$value}
+
+result=dateframe(growth_rate=r,x1=ans.x1,x2=ans.x2,rev=ans.rev)
+                 
