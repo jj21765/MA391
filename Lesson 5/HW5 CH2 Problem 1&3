@@ -1,0 +1,39 @@
+library(ma391ekang)
+dfx=function(x){return((0.05*x[1]*(1-x[2]/150000)-1/100000000*x[1]*x[2])*-1)}
+dfy=function(x){return((0.08*x[2]*(1-x[2]/400000)-1/100000000*x[1]*x[2])*-1)}
+x=c(500000,500000)
+ans=optim(x,dfx)
+print(ans$par)
+ans=optim(x,dfy)
+print(ans$par)
+
+R=function(x){return(12000*(0.05*x[1]*(1-x[2]/150000)-1/100000000*x[1]*x[2])+
+                       6000*(0.08*x[2]*(1-x[2]/400000)-1/100000000*x[1]*x[2])*-1)}
+x=c(50000,50000)
+ans=optim(x,R,method="L-BFGS-B")
+dfx(ans$par)
+dfy(ans$par)
+
+r2=function(x){
+  fr2=function(x){return(12000*(0.05*x[1]*(1-x[2]/150000)-1/100000000*x[1]*x[2])+
+                           6000*(r2*x[2]*(1-x[2]/400000)-1/100000000*x[1]*x[2])*-1)}
+  x=c(50000,50000)
+  ans=optim(x,R,method="L-BFGS-B")
+  return(ans)
+  
+}
+r2(0.08)
+r=seq(0.06,0.1,0.01)
+ans.x1=0
+ans.x2=0
+ans.r=0
+for(i in 1:length(r)){
+  ans=r2(r[i])
+  ans.x1[i]=ans$par[1]
+  ans.x2[i]=ans$par[2]
+  ans.r[i]=-ans$value
+}
+print(ans.x1)
+result=data.frame(growth_rate=r,x1=ans.x1,x2=ans.x2,r=ans.r)
+print(result)
+
