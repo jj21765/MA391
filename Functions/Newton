@@ -1,0 +1,17 @@
+fprime=function(f,a,h=0.0001){(f(a+h)-f(a-h))/(2*h)}
+
+newton=function(f,x0,tol=0.0001){
+  xn=x0
+  n=1
+  while(abs(f(xn))>tol & n<1000){ #keep going as long as its greater than the epsilon#
+    #also for 1000 can use any number#
+    xn=xn-f(xn)/fprime(f,xn)
+    n=n+1
+  }
+  return(xn)
+}
+
+#f=function(x){x^2-4}
+
+#newton(f,3)
+#newton(f,-1)
