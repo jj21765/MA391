@@ -1,9 +1,0 @@
-library(ma391ekang)
-r=0.08
-K=400000
-
-h=function(x){r*70000*(1-(70000/K))-0.0001*70000*x}
-dH=fprime(h,x)
-bisection(dH,-10,20)
-
-help(bisection)
