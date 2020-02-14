@@ -1,0 +1,14 @@
+## Hessian Function ##
+hessian = function(f,x,hs=0.01){
+  n = length(x)
+  H = array(0,dim=c(n,n))
+
+  for (i in 1:n){
+    h = array(0.0,dim=c(n,1))
+    h[i] = hs
+    H[i,]=t((grad(f,x+h)-grad(f,x-h))/(2*hs))
+    #print(H[i,])
+  }
+  return (H)
+}
+
