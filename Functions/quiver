@@ -1,0 +1,7 @@
+library(pracma)
+quiver <- function(x, y, u, v,
+                   scale = 0.05, angle = 10, length = 0.1, ...) {
+  stopifnot(is.numeric(x), is.numeric(y), is.numeric(u), is.numeric(v))
+  
+  arrows(x, y, x+scale*u, y+scale*v, angle=10, length=length, ...)
+}
