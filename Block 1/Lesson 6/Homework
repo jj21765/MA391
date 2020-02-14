@@ -1,0 +1,42 @@
+#PROBLEM 5
+
+library(ma391ekang)
+
+p=function(x){((399-0.004*x[1]-0.01*x[2])*x[2]+(339-0.01*x[1]-0.003*x[2])*x[1]-400000-195*x[1]-225*x[2]-25*(x[1]+x[2]))*(-1)}
+ans=optim(x,p,method="BFGS")
+print(ans$par)
+print(ans$value)
+help(optim)
+
+pp=function(x){((399-0.004*x[1]-0.01*x[2])*x[2]+(339-0.01*x[1]-0.003*x[2])*x[1]-400000-195*x[1]-225*x[2])*(-1)}
+dp=fprime(pp,x)
+ans=optim(x,pp,method="BFGS")
+print(ans$par)
+print(ans$value)
+
+P = function(a){
+  f = function(x){((339-a*x[1]-0.003*x[2])*x[1]
+                   +(399-0.004*x[1]-0.01*x[2])*x[2]
+                   -(400000+195*x[1]+225*x[2]))*-1
+  }
+  x = c(4700,7042)
+  ans = optim(x,f,method="BFGS")
+  ## Choose which of these that we will return ##
+  #print(ans$par)
+  print(ans$value)
+  return(ans)
+}
+
+a = seq(0.002,0.02,0.001)
+ans.x1=0
+ans.x2=0
+ans.profit=0
+for(i in 1:length(a)){
+  ans = P(a[i])
+  ans.x1[i]=ans$par[1]
+  ans.x2[i]=ans$par[2]
+  ans.profit[i] = -ans$value
+}
+
+result = data.frame(a=a,x1=ans.x1,x2=ans.x2,profit=format(ans.profit,big.mark=","))
+print(result)
