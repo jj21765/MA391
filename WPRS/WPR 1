@@ -1,0 +1,36 @@
+library(ma391ekang);library(MASS);library(NlcOptim)
+obj=function(x){return(((pi)*x[3]^2*x[2]+(1/3)*(pi)*x[3]^2*x[1])*(-1))}
+x0=c(2,2,1)
+con=function(x){
+  f=NULL
+  f=rbind(f,(2*(pi)*x[3]*x[2]+2*(pi)*x[3]^2+(pi)*x[3]*(x[3]^2+x[1]^2)^.5-450))
+  return(list(ceq=f,c=NULL))
+}
+ans=solnl(x0,objfun=obj,confun=con)
+print(ans$par)
+print(ans)
+
+800/2.5
+
+#number 2
+f=function(x){(200*x[1]*x[2]+200*x[3]+100*x[1]+100*x[4]-x[1]*x[3]-x[2]^3-x[4]^2)*(-1)}
+A=matrix(c(-1,0,0,0,0,-1,0,0,0,0,-1,0,0,0,0,-1),nrow=4)
+B=matrix(c(0,0,0,0),nrow=4)
+Aeq=matrix(c(3,-2,1,2,-1,1,5,-10),nrow=2)
+Beq=matrix(c(1000,2000),nrow=2)
+x0=c(1,1,1,1)
+ans=solnl(x0,objfun=f,A=A,B=B,Aeq=Aeq,Beq=Beq)
+print(ans)
+
+#number 3
+obj=function(x){(50*(2*pi*x[1]*x[2]+pi*x[1]^2)+720*pi*x[1]^2)*(-1)}
+con=function(x){
+  f=NULL
+  f=rbind(f,pi*(x[1]^2)*x[2]-20)
+  return(list(ceq=f,c=NULL))
+}
+A=matrix(c(-4,1,0,0),nrow=2)
+B=matrix(c(0,0),nrow=2)
+x0=c(2,3)
+ans=solnl(x0,objfun=obj,confun=con,A=A,B=B)
+print(ans$par)
