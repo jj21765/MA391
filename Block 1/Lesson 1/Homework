@@ -1,0 +1,69 @@
+#PROBELM 1.1
+fprime = function (f,a,h=0.0001){(f(a+h)-f(a-h))/(2*h)}
+profit = function (x){
+  return((1500-100*x)*(1+.15*x))
+}
+x = seq(0,15,1)
+plot(x,profit(x),type="o")
+
+dProfit = function(x){fprime(profit,x)}
+bisection(dProfit,0,20)
+
+sales = seq(0.05,0.5,0.01)
+ans = 0
+ans.profit=0
+for (i in 1:length(sales)){
+  profit = function (x){
+    return((1500-100*x)*(1+sales[i]*x))
+  }
+  dProfit = function(x){fprime(profit,x)}
+  ans[i] = bisection(dProfit,-10,20)
+  ans.profit[i]=profit(ans[i])
+}
+result = data.frame(salesIncrease=sales,optimalRebate=ans,profit=ans.profit)
+print(result)
+plot(sales,ans,"o",xlab="Sales Increase",ylab="x (# of rebates)")
+
+#PROBLEM 1.2
+
+feed = seq(0.3,0.6,0.05)
+#seeing how it changes from 0.3 to 0.6, for every 0.05
+pr = array(0,length(feed))
+ans = array(0,length(feed))
+#here were setting a list of all the profit and answer(?)
+#values for each value in the feed sequence
+for (i in 1:length(feed)){
+  profit = function (x){
+    return((0.65-0.01*x)*(200+5*x)-feed[i]*x)
+  }
+  dProfit = function(x){fprime(profit,x,)}
+  ans[i] = bisection(dProfit,-100,50,0.0001)
+  #optimizing by finding the derivative first
+  pr[i] = profit(round(ans[i]))
+}
+print(ans)
+print(pr)
+plot(feed,ans,"o",xlab="feed cost",ylab="x(Days to Sell)")
+title("Sensitivity of Feed Cost of the Pig")
+#so the profit doesn't really change a lot with change in cost
+
+#but with part b, cost is now .6 and growth rate is 7
+profit = function (x){
+  return((0.65-0.01*x)*(200+7*x)-0.6*x)
+}
+x=seq(0,20,1)
+dProfit = function(x){fprime(profit,x)}
+ans=bisection(dProfit,0,20)
+print(ans)
+profit(round(ans))
+
+#PROBLEM 1.3
+
+library(ma391ekang)
+f1 = function(x){0.65-0.01*x}
+f2 = function(x){0.65-0.01*x+0.00004*x^2}
+
+t=seq(0,20,1)
+plot(t,f1(t),"l",lwd=3)
+points(t,f2(t),"o",col="red")
+
