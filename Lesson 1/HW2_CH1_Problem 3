@@ -1,7 +1,0 @@
-library(ma391ekang)
-f1 = function(x){0.65-0.01*x}
-f2 = function(x){0.65-0.01*x+0.00004*x^2}
-
-t=seq(0,20,1)
-plot(t,f1(t),"l",lwd=3)
-points(t,f2(t),"o",col="red")
