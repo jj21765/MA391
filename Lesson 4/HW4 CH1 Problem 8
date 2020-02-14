@@ -1,4 +1,0 @@
-library(ma391ekang)
-p=function(x){((0.65-0.01*x)*(5*x-x^2/60+200)-.45*x)*(-1)}
-optim(x,p)
-
