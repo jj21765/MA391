@@ -26,7 +26,7 @@ print(ans)
 print(profitrate(ans))
 plot(x,profitrate(x),type="o")
 
-#RETRY AFTER CLASS
+#PROBLEM 7
 
 library(ma391ekang)
 f=function(x){((650+5*x)*(-.25-0.01*x)-(140.5+.45*x))*(-1)}
