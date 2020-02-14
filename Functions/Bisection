@@ -1,0 +1,17 @@
+fprime=function(f,a,h=0.0001){(f(a+h)-f(a-h))/(2*h)}
+
+bisection=function(f,a,b,tol=0.0001){
+  if(function(a)*function(b)>=0){
+    return("False")}
+  else{
+    mid=a
+    while(abs(function(mid))>tol){
+      mid=(a+b)/2
+      if(function(mid)*function(a)<0)(a=mid)
+      else(b=mid)
+      x=mid
+      y=f(mid)
+    }
+    return(mid)
+  }
+}
