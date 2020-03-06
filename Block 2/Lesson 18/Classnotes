@@ -1,0 +1,29 @@
+library(ma391ekang)
+library(pracma)
+
+##NUMBER 1
+f = function(x){c(0.2*x[1]*(1-x[1]/500)-0.0001*x[1]*x[2],
+                  0.3*x[2]*(1-x[2]/350)-0.0002*x[2]*x[1])}
+#this is now the difference equation?
+
+#vectorfield
+VectorField(f, xlim=c(0,750),ylim=c(0,750))
+xStar = zeros(f,c(400,200));print(xStar)
+A = Jacobian2(f,xStar)
+ev = eigen(A)
+print(ev)
+
+#(500,0) EQUILIBRIUM
+
+xStar = c(500,0)
+A=Jacobian2(f,xStar)
+ev = eigen(A)
+print(ev)
+
+#recursion
+f = function(x){c(x[1]+0.2*x[1]*(1-x[1]/500)-0.0001*x[1]*x[2], 
+                  x[2]+0.3*x[2]*(1-x[2]/350)-0.0002*x[2]*x[1])}
+A = Jacobian2(f, xStar)
+print(A)
+ev = eigen(A)
+print(ev)
