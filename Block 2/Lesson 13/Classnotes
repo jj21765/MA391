@@ -1,0 +1,124 @@
+
+options(warn=-1)
+library(pracma)
+##########################################################################
+#### Quiver  - used by vector field ######################################
+##########################################################################
+
+quiver <- function(x, y, u, v,
+                   scale = 0.05, angle = 10, length = 0.1, ...) {
+  stopifnot(is.numeric(x), is.numeric(y), is.numeric(u), is.numeric(v))
+  
+  arrows(x, y, x+scale*u, y+scale*v, angle=10, length=length, ...)
+}
+
+###########################################################################
+##### Vector Field ####################
+###########################################################################
+
+vectorfield = function(fun, xlim, ylim, n = 16,
+                       scale = 0.05, col = "darkblue",xlab = "xlim", ylab="ylim", 
+                       main="",...) {
+  stopifnot(is.numeric(xlim), length(xlim) == 2,
+            is.numeric(ylim), length(ylim) == 2)
+  
+  xpts = linspace(xlim[1], xlim[2], n)#seq(xlim[1],xlim[2],length.out=n)
+  ypts = linspace(ylim[1], ylim[2], n)#seq(ylim[1],ylim[2],length.out=n)
+  
+  M = meshgrid(xpts, ypts)
+  x = M$X
+  y = M$Y
+  px=M$X
+  py=M$Y
+  for (i  in 1:n){
+    for (j in 1:n){
+      ans = fun(c(xpts[j],ypts[i]))           
+      px[i,j]=ans[1]
+      py[i,j]=ans[2]
+    }
+  }
+  
+  
+  plot(xlim, ylim, type="n",xlab=xlab,ylab=ylab,main=main); grid()
+  quiver(x, y, px, py, scale = scale, col = col, ...)   
+  #return(list(px=px,py=py))
+}
+f = function(x){c(x[1]*(1-x[1]-x[2]),x[2]*(0.75-x[2]-0.5*x[1]))}
+ans = vectorfield(f,xlim=c(0,1.5),ylim=c(0,1),n=20,scale=0.05,col="red",main="Hello",xlab="X axis title")
+
+## Graph of the vector field and three of the four equilibrium points
+f = function(x){c(0.05*x[1]*(1-x[1]/150000)-10^(-8)*x[1]*x[2],0.08*x[2]*(1-x[2]/400000)-10^(-8)*x[1]*x[2])}
+ans=vectorfield(f,xlim=c(0,200000),ylim=c(0,450000),n=20,
+                scale=0.15,col="red",main="Whale Population",xlab="BlueWhales",ylab="FinWhales")
+#scale just changes the size of the vector 
+points(0,0,pch=21,bg="blue")
+points(0,400000,pch=21,bg="blue")
+points(150000,0,pch=21,bg="blue")
+points(150000,400000,pch=21,bg="orange",cex=2)
+
+###FINDING EQUILIBRIUM
+Jacobian2 = function(f,x0,h=1E-4){
+  jax = matrix(0,nrow=2,ncol=2)
+  xph = c(x0[1]+h,x0[2]);xmh=c(x0[1]-h,x0[2])
+  yph = c(x0[1],x0[2]+h);ymh=c(x0[1],x0[2]-h)
+  jax[,1]=(f(xph)-f(xmh))/(2*h)
+  jax[,2]=(f(yph)-f(ymh))/(2*h)            
+  return(jax)
+}
+norm2 = function(v){sqrt(v[1]^2+v[2]^2)}
+zeros = function(f,x0,h=1E-4,tol=1E-4){
+  i = 1
+  p=c(1,1)
+  while (norm2(p)>tol & i<100){
+    p = solve(Jacobian2(f,x0),-f(x0)) # linear algebra step
+    x0 = x0+p
+    #print(i)
+    #print(x0)
+    i=i+1
+  }
+  return(x0)
+}
+## Solutions for this problem ####
+x0=c(150000,400000)
+print(zeros(f,x0))
+x0=c(150000,10)
+print(zeros(f,x0))
+x0=c(10,400000)
+print(zeros(f,x0))
+
+#now we need to put a point in, and find its path through equilibrium, 
+#since we aren't finding the 0s anymore
+path = function(f,x0,deltat=0.01,N=1000,tol=1E-4){
+  points=matrix(0,ncol=2)
+  points[1,] = x0
+  n = 0
+  p = c(1,1)
+  while(norm2(p)>tol & n<N){
+    n=n+1
+    p = f(x0)*deltat
+    x0=x0+p
+    points = rbind(points,x0)
+  }
+  
+  rownames(points)=0:n
+  return(points)
+}
+#N is maximum number of steps 
+#f(x0) gives u value of the function at the point, but
+#what is that? with 4.2 its the change of population of blue
+#and the change of population of fin
+#multiply in deltat which is a very small scalar mult
+#add to the x0, and collecting it at the bottom 
+#rbind collects all the points at the bottom, and you then 
+#return the points at the end 
+
+f = function(x){c(0.05*x[1]*(1-x[1]/150000)-10^(-8)*x[1]*x[2],0.08*x[2]*(1-x[2]/400000)-10^(-8)*x[1]*x[2])}
+ans=vectorfield(f,xlim=c(0,200000),ylim=c(0,450000),n=20,
+                scale=0.15,col="red",main="Whale Population",xlab="BlueWhales",ylab="FinWhales")
+#the zeroes just finds where x1 and x2 are 0
+#this function just gives you the equilibrium pts 
+
+x0=c(5000,70000)
+pts = path(f,x0,N=10000,deltat=0.5)
+points(pts[,1],pts[2,],type="l")
+tail(pts)
