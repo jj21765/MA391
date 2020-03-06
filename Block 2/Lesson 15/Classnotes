@@ -1,0 +1,42 @@
+#TO get the S matrix, we need to find the eigenvectors
+#which we find from the original matrix A 
+
+print("A")
+A = matrix(c(.3,.52,.28,.5,0,0,0,.8,.5),nrow=3,byrow=T);print(A)
+print("x0")
+x0 = matrix(c(2,2,0));print(x0)
+ev = eigen(A); print(ev)
+#the eigenvalue is less than 1, or not equal to 1
+#this point is going to 0 (multiply each value by itself? and it
+#will keep decreasing cuz theyre decimals)
+#after pringint ev, the eigenvector is S[,2], or its by columns 
+#NOT BY ROWS 
+#the eigenvectors shown when you print ev is just the unit vectors
+#but there are infinite eigenvectors that are scalar mult 
+S=ev$vectors;print(S)
+Lambda = diag(ev$values);print(Lambda)
+lambda = ev$values; print(lambda)
+print("Lambda-diagonal matrix with eigenvalues in diagonal")
+print("S")
+
+c = solve(S,x0);print(c)
+#so here, the second eigenvalue? is basically 0, but we can still leave it
+
+## Verify that the matrix multiplication gives the same result as the 
+##analytic vector solution ##
+xk = function(k){(c[1]*lambda[1]^k*S[,1]+c[2]*lambda[2]^k*S[,2]+c[3]*lambda[3]^k*S[,3])}
+xk(0)
+xk(1)
+xk(2)
+x = x0
+for (i in 0:10){
+  print(t(x))
+  print(xk(i))
+  #this gives us just row vectors 
+  ## Compare with matrix multiplication uk = A^k*u0##
+  x = A%*%x
+  print(t(round(x,3)))
+  #so when you check the values for whenk is 0,1,2, you can see that
+  #this method gives u the same values 
+}
+#A%*%x gives you matrix multiplication
