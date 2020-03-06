@@ -1,0 +1,36 @@
+
+##NUMBER 1
+f = function(x){C(0.2*x[1]*(1-x[1]/500)-0.0001*x[1]*x[2],
+                  0.3*x[2]*(1-x[2]/350)-0.0002*x[2]*x[1])}
+#this is now the difference equation? 
+
+VectorField = function(fun, xlim, ylim, n = 16,
+                       scale = 0.05, col = "darkblue",xlab = "xlim", ylab="ylim", 
+                       main="",...) {
+  stopifnot(is.numeric(xlim), length(xlim) == 2,
+            is.numeric(ylim), length(ylim) == 2)
+  
+  xpts = linspace(xlim[1], xlim[2], n)#seq(xlim[1],xlim[2],length.out=n)
+  ypts = linspace(ylim[1], ylim[2], n)#seq(ylim[1],ylim[2],length.out=n)
+  
+  M = meshgrid(xpts, ypts)
+  x = M$X
+  y = M$Y
+  px=M$X
+  py=M$Y
+  for (i  in 1:n){
+    for (j in 1:n){
+      ans = fun(c(xpts[j],ypts[i]))           
+      px[i,j]=ans[1]
+      py[i,j]=ans[2]
+    }
+  }
+  
+  
+  plot(xlim, ylim, type="n",xlab=xlab,ylab=ylab,main=main); grid()
+  quiver(x, y, px, py, scale = scale, col = col, ...)   
+  #return(list(px=px,py=py))
+}
+
+#vectorfield
+VectorField()
