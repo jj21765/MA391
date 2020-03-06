@@ -1,0 +1,7 @@
+#LSN 12: steady State Variable
+library(ma391ekang)
+
+#single variable, logistic equation
+dPdt = function(P){0.08*P*(1-P/400000)}
+p = seq(0,420000,10)
+plot(p,dPdt(p))
