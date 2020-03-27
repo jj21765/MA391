@@ -1,0 +1,13 @@
+#HW WEEK1: 6b)
+x = seq(153,189)
+dp = 0
+#in class
+dp = sum(dpois(x,171))
+
+dp = dpois(171,153)+dpois(171,154)+dpois(171,155)+dpois(171,156)+dpois(171,157)+dpois(171,158)+dpois(171,159)+dpois(171,160)+
+  dpois(171,161)+dpois(171,162)+dpois(171,163)+dpois(171,164)+dpois(171,165)+dpois(171,166)+dpois(171,167)+dpois(171,168)+dpois(171,169)+dpois(171,170)+
+  dpois(171,171)+dpois(171,172)+dpois(171,173)+dpois(171,174)+dpois(171,175)+dpois(171,176)+dpois(171,177)+dpois(171,178)+dpois(171,179)+dpois(171,180)+
+  dpois(171,181)+dpois(171,182)+dpois(171,183)+dpois(171,184)+dpois(171,185)+dpois(171,186)+dpois(171,187)+dpois(171,188)+dpois(171,189)
+print(dp)
+dp = dp + dpois(171,152) + dpois(171,190) + dpois(171,151) + dpois(171,191) + dpois(171,150)+dpois(171,192)
+print(dp)
