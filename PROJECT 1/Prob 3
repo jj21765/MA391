@@ -1,0 +1,26 @@
+#CH5, PROBLEM 1
+library(pracma)
+
+#part a: plot the vector field
+
+alpha = 0.00001
+f = function(x){c(.05*x[1]-alpha*x[1]*x[2],
+                  .08*x[2]-alpha*x[1]*x[2])}
+
+vectorfield(f,xlim=c(0,100000),ylim=c(0,100000))
+
+#part b: use eigenvalue method to determine stablility of equilibrium points 
+x0=c(40000,30000)
+x0=zeros(f,x0)
+print(x0)
+#the initial condition is (8000,5000)
+A = Jacobian2(f,x0)
+ev=eigen(A)
+print(ev)
+#not all eigenvalues are less than 0, so unstable equilibrium point at (8000,5000)
+x0 = c(0,0)
+A = Jacobian2(f,x0)
+ev=eigen(A)
+print(ev)
+#another equilibrium point at (0,0) but not all eigenvalues are less than 0 as both
+#are positive, so unstable equilibrium point
