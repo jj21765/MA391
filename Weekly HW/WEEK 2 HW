@@ -1,0 +1,154 @@
+#WEEK 2
+
+#CH 5, EX 1
+P = matrix(c(.368, 0, .632, .368, .368, .632, .184, .368, .448), nrow=3, byrow=T);print(P)
+
+matrixPower = function(M,n){
+  M0 = M
+  if (n==0){return(diag(length(M[,1])))}
+  if (n==1){return(M)}
+  for (i in 2:n){
+    M = M%*%M0
+  }
+  return(M)
+}
+
+pi0 = c(1,0,0)
+pi0%*%matrixPower(P,2) #state 2
+pi0%*%matrixPower(P,1000)
+
+print(P)
+M = t(P)-diag(3);print(M)
+PI = rbind(M,c(1,1,1));print(P)
+b = matrix(c(0,0,0,1)); print(b)
+solve(t(PI)%*%PI, t(PI)%*%b)
+
+#probability of Dn > 1,2,3
+1-ppois(1,1)
+1-ppois(2,1)
+1-ppois(3,1)
+
+#part b
+#---------------------------------------------------------------------------------------
+#for lambda = 0.75
+exp(-0.75)*.75^0 #P(D=0)
+exp(-0.75)*.75^1/1 #P(D=1)
+exp(-0.75)*.75^2/2 #P(D=2)
+1-exp(-0.75)*.75^0 #P(D>=1)
+1-exp(-0.75)*.75^1/1-exp(-0.75)*.75^2/2 #P(D=0)+P(D>=3)
+
+#solving for equilibirum state vector for lambda = 0.75
+P = matrix(c(.472,0,.528,.354,.472,.528,.133,.354,.513),nrow=3,byrow=T);print(P)
+M = t(P)-diag(3);print(M)
+PI = rbind(M,c(1,1,1));print(P)
+b = matrix(c(0,0,0,1)); print(b)
+solve(t(PI)%*%PI, t(PI)%*%b)
+
+#solving prob of losing sales for lambda = 0.75
+1-ppois(1,0.75) #P(X=1)
+1-ppois(2,0.75) #P(x=2)
+1-ppois(3,0.75) #P(x=3)
+#---------------------------------------------------------------------------------------
+#for lambda = 0.9
+exp(-0.9)*.9^0 #P(D=0)
+exp(-0.9)*.9^1/1 #P(D=1)
+exp(-0.9)*.9^2/2 #P(D=2)
+1-exp(-0.9)*.9^0 #P(D>=1)
+1-exp(-0.9)*.9^1/1-exp(-0.9)*.9^2/2 #P(D=0)+P(D>=3)
+
+#solving for equilibirum state vector for lambda = 0.0
+P = matrix(c(.407,0,.593,.366,.407,.593,.165,.366,.469),nrow=3,byrow=T);print(P)
+M = t(P)-diag(3);print(M)
+PI = rbind(M,c(1,1,1));print(P)
+b = matrix(c(0,0,0,1)); print(b)
+solve(t(PI)%*%PI, t(PI)%*%b)
+
+#solving prob of losing sales for lambda = 0.0
+1-ppois(1,0.9) #P(X=1)
+1-ppois(2,0.9) #P(x=2)
+1-ppois(3,0.9) #P(x=3)
+#---------------------------------------------------------------------------------------
+#for lambda = 1.1
+exp(-1.1)*1.1^0 #P(D=0)
+exp(-1.1)*1.1^1/1 #P(D=1)
+exp(-1.1)*1.1^2/2 #P(D=2)
+1-exp(-1.1)*1.1^0 #P(D>=1)
+1-exp(-1.1)*1.1^1/1-exp(-1.1)*1.1^2/2 #P(D=0)+P(D>=3)
+
+#solving for equilibirum state vector for lambda = 1.1
+P = matrix(c(.333,0,.667,.366,.333,.667,.202,.366,.432),nrow=3,byrow=T);print(P)
+M = t(P)-diag(3);print(M)
+PI = rbind(M,c(1,1,1));print(P)
+b = matrix(c(0,0,0,1)); print(b)
+solve(t(PI)%*%PI, t(PI)%*%b)
+
+#solving prob of losing sales for lambda = 1.1
+1-ppois(1,1.1) #P(X=1)
+1-ppois(2,1.1) #P(x=2)
+1-ppois(3,1.1) #P(x=3)
+#---------------------------------------------------------------------------------------
+#for lambda = 1.25
+exp(-1.25)*1.25^0 #P(D=0)
+exp(-1.25)*1.25^1/1 #P(D=1)
+exp(-1.25)*1.25^2/2 #P(D=2)
+1-exp(-1.25)*1.25^0 #P(D>=1)
+1-exp(-1.25)*1.25^1/1-exp(-1.25)*1.25^2/2 #P(D=0)+P(D>=3)
+
+#solving for equilibirum state vector for lambda = 1.25
+P = matrix(c(.287,0,.713,.358,.287,.713,.224,.358,.418),nrow=3,byrow=T);print(P)
+M = t(P)-diag(3);print(M)
+PI = rbind(M,c(1,1,1));print(P)
+b = matrix(c(0,0,0,1)); print(b)
+solve(t(PI)%*%PI, t(PI)%*%b)
+
+#solving prob of losing sales for lambda = 1.25
+1-ppois(1,1.25) #P(X=1)
+1-ppois(2,1.25) #P(x=2)
+1-ppois(3,1.25) #P(x=3)
+
+lambda = c(0.75,0.9,1,1.1,1.25)
+P = c(.0574,.07927,.0947,.111,.137)
+barplot(P, names.arg = lambda,ylim=c(0,0.2))
+
+#CH 5 EX 5
+P = matrix(c(0.9,0.02,0.08,0.05,0.85,0.1,0.05,0.05,0.9),nrow=3,byrow=T); print(P)
+M = t(P)-diag(3);print(M)
+PI = rbind(M,c(1,1,1));print(P)
+b = matrix(c(0,0,0,1)); print(b)
+solve(t(PI)%*%PI, t(PI)%*%b)
+
+P = matrix(c(0.8,0.05,0.05,0.02,0.7,0.05,0.08,0.1,0.8),nrow=3,byrow=T); print(P)
+M = t(P)-diag(3);print(M)
+PI = rbind(M,c(1,1,1));print(P)
+b = matrix(c(0,0,0,1)); print(b)
+solve(t(PI)%*%PI, t(PI)%*%b)
+
+#CH 5 EX 8
+lam = 4.5
+mu = 7.3
+n = 27
+ro = (lam/mu)
+P0 = (1-ro)/(1-ro^28)
+pow = seq(1,27)
+P = 0
+for (i in 1:length(pow)){P[i]=ro^pow[i]*P0}
+print(P)
+result = data.frame(Xt=0:27,P=c(P0,P))
+print(result)
+bb = barplot(c(P0,P[1:10], names.arg = 0:10,ylim=c(0,0.4)))
+text(bb,c(P0,P[1:10])+0.02, labels=round(c(P0,P[1:10]), 3), cex=0.8)
+a = matrix(c(1:28), nrow = 28)
+#with two mechanics
+lam = 4.5
+mu = 14.6
+n = 27
+ro = (lam/mu)
+P0 = (1-ro)/(1-ro^28)
+pow = seq(1,27)
+P = 0
+for (i in 1:length(pow)){P[i]=ro^pow[i]*P0}
+print(P)
+result = data.frame(Xt=0:27,P=c(P0,P))
+print(result)
+bb = barplot(c(P0,P[1:10], names.arg = 0:10,ylim=c(0,0.4)))
+text(bb,c(P0,P[1:10])+0.02, labels=round(c(P0,P[1:10]), 3), cex=0.8)
