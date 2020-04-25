@@ -1,0 +1,101 @@
+#PROB 7, PART A
+rainy = function(p,iterations){
+  #1 is rainy days
+  state = 0
+  dayNum = 0
+  record  = data.frame(day = 0,state=0)
+  while (dayNum < iterations){
+    dayNum = dayNum+1
+    U = runif(1)
+    if(state == 0){
+      if(U<p){state = 0}else{state=1} 
+    }
+    else{
+      if(U<p){state = 1}else{state=0} 
+    }
+    
+    record = rbind(record,data.frame(day=dayNum,state=state))
+  }
+  return(record)
+}
+model = rainy(0.75,1000)
+
+sum(model$state)/1000
+
+
+#PROBLEM 7, PART B
+rainy = function(p,iterations){
+  state = 0
+  dayNum = 0
+  record  = data.frame(day = 0,state = 0 )
+  while (dayNum < iterations){
+    dayNum = dayNum+1
+    U = runif(1)
+    if(state == 0){
+      if(U<p){state = 0}else{state=1}
+    }
+    else{
+      if(U<p){state = 1}else{state=0} 
+    }
+    
+    record = rbind(record,data.frame(day=dayNum,state=state))
+  }
+  #return(record)
+  if(sum(record$state)==3){
+    oneRun = data.frame(consec = 1)
+  }
+  else{oneRun = data.frame(consec = 0)}
+  return(oneRun)
+}
+model = rainy(0.75,100)
+print(model)
+
+results = data.frame(runNum = as.numeric(),consec=as.numeric())
+
+N = 1000; p = 0.75
+for (i in 1:N){
+  oneRun = rainy(p,3)
+  results =
+    rbind(results,data.frame(oneRun$consec))
+}
+
+print(results)
+sum(results$oneRun.consec)/N
+
+
+#PROBLEM 11 PART A
+customers = function(p,iterations){
+  state = 0
+  day = 0
+  record = data.frame(day = 0, state = 0)
+  while(day<iterations){
+    day=day+1
+    U=runif(1)
+    if(U<p){
+      state = state+1 
+    }
+    else{state = state}
+    record = rbind(record,data.frame(day=day,state=state))
+  }
+  return(record)
+}
+
+
+x = customers(0.2,5)
+print(x)
+x$state[6]
+N = 10000
+results = data.frame(runNumber = as.numeric(),customers=as.numeric())
+for(i in 1:N){
+  x = customers(0.2,5)
+  results = rbind(results,data.frame(runNumber = i,customers = x$state[6]))
+
+}
+val = sum(results$customers)/N
+
+#PROBLEM 11 PART b
+
+#for state 1
+(.285)*(1-val)
+
+#there is no loss in state 2 or state 3 because there are more sales than there are customers that come in 
