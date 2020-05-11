@@ -1,0 +1,164 @@
+getwd()
+#read in csv file 
+setwd("C:/Users/Lucas/Downloads")
+data1 = read.csv("mnist_train.csv",header=FALSE)
+target = as.matrix(data1[,1])
+#train gets rid of first column, since target is the first column 
+train=as.matrix(data1[,2:785])
+
+target[1]
+#so all other numbers in target are pixels that represent the number five (visually)
+train[1,]
+#doesn't have V1
+
+############################################################################
+# target is a vector of digits, we need it to be a vector of 0's and 1's####
+# 3 => [0 0 0 1 0 0 0 0 0 0] and 0 => [1 0 0 0 0 0 0 0 0 0] as examples ####
+############################################################################
+tgt = matrix(0,nrow=10,ncol=length(target))
+for (i in 1:length(target)){
+  tgt[target[i]+1,i]=1
+}
+
+idx = 5;
+print(target[idx]);print(tgt[,idx])
+
+###################################################
+## Visually display what is in the train matrix ###
+## Each row of 784 numbers represents a number ####
+###################################################
+options(repr.plot.width=3, repr.plot.height=3) #make the plot smaller
+displayImage=function(data){
+  mat = matrix(0,nrow=28,ncol=28)
+  j = 1
+  for (idx in 1:length(data)){
+    n = data[idx]
+    i = as.integer(floor((idx-1)/28)+1)
+    j = as.integer((idx-(i-1)*28))
+    mat[j,29-i]=data[idx]
+  }
+  image(mat,col=gray.colors(255,rev=TRUE))
+}
+
+displayImage(train[idx,])
+
+
+
+######Activation Function##################
+sig = function(x){1/(1+exp(-x))}
+x = seq(-10,10,0.01)
+plot(x,sig(x),type="l")
+
+sig(50)
+
+library(R6)
+NeuralNetwork = R6Class("NeuralNetwork",list(
+  iNodes = 0,
+  hNodes = 0,
+  fNodes = 0,
+  lr = 0,
+  WIH = 0,
+  WHF = 0,
+  hBias = 0,
+  iBias = 0,
+  initialize = function(iNodes,hNodes,fNodes,lr){
+    self$iNodes=iNodes
+    self$hNodes=hNodes
+    self$fNodes=fNodes
+    self$lr = lr
+    self$WIH = matrix(rnorm(iNodes*hNodes,mean=0,sd=iNodes^(-0.5)),nrow=iNodes,ncol=hNodes)
+    self$WHF = matrix(rnorm(hNodes*fNodes,mean=0,sd=hNodes^(-0.5)),nrow=hNodes,ncol=fNodes)
+    self$iBias = matrix(rnorm(hNodes,mean=0,sd=iNodes^(-0.5)),nrow = hNodes)
+    self$hBias = matrix(rnorm(fNodes,mean=0,sd=hNodes^(-0.5)),nrow = fNodes)
+  },
+  print = function(...){
+    cat("Input Nodes: ",self$iNodes,"; Hidden Nodes: ",self$hNodes," Final Layer Nodes: ",self$fNodes)
+    
+  },
+  activation = function(x){1/(1+exp(-x))},
+  model = function(Xi){
+    Oi = matrix(Xi)
+    Xh = t(self$WIH)%*%Oi+self$iBias
+    Oh = self$activation(Xh)
+    Xf = t(self$WHF)%*%Oh+self$hBias
+    Of = self$activation(Xf)
+    return(Of)
+  },
+  train = function(Xi,target){
+    Oi = matrix(Xi)
+    Xh = t(self$WIH)%*%Oi+self$iBias
+    Oh = self$activation(Xh)
+    Xf = t(self$WHF)%*%Oh+self$hBias
+    Of = self$activation(Xf)
+    
+    ## Target Vector ##
+    t = matrix(target)
+    
+    ## Errors by Layer ##
+    Ef = t-Of
+    Eh = self$WHF%*%Ef
+    
+    deltahBias = Ef*Of*(1-Of)
+    deltaiBias = Eh*Oh*(1-Oh)
+    
+    deltaWHF = Oh %*% t(deltahBias)
+    deltaWIH = Oi %*% t(deltaiBias)
+    
+    self$WHF = self$WHF + deltaWHF*self$lr
+    self$WIH = self$WIH + deltaWIH*self$lr
+    self$iBias = self$iBias + deltaiBias*self$lr
+    self$hBias = self$hBias + deltahBias*self$lr
+    
+  }
+))
+### Normalize our numbers ###
+ANN = NeuralNetwork$new(784,200,10,0.2)
+print(ANN)
+ANN$model(train[idx,])
+
+for(i in 1:length(train[,1])){
+  d=train[i,]/255*0.99+0.01
+  t = tgt[,i]+0.01
+  ANN$train(d,t)
+}
+
+idx = 3
+d = train[idx,]/255*0.99+0.01
+displayImage(d)
+round(ANN$model(train[idx,]),3)
+
+readModel = function(d){
+  return(which.max(ANN$model(d)))
+}
+
+realModel(d)
+
+##Bring in test Data ##################
+data2 = read.csv("mnist_test.csv",header=FALSE)
+targetT = as.matrix(data2[,1])
+testT = as.matrix(data2[,2:785])
+targetT[1]
+
+tgtT = matrix(0,nrow=10,ncol=length(targetT))
+for (i in 1:length(targetT)){
+  tgtT[targetT[i]+1,i]=1
+}
+
+idx = 7;
+d=testT[idx,]
+displayImage(d)
+print(targetT[idx])
+round(ANN$model(d),3)
+readModel(d)
+
+N=length(targetT)
+correct = matrix(0,nrow=N)
+#testT is 784 numbers
+#readModel sends it through neuralNet a nd says which is biggest
+for (i in 1:N){
+  d = testT[i,]/255*0.99+0.01
+  if(readModel(d)==targetT[i]){correct[i]=1}
+}
+print(correct)
+
+sum(correct)/N
