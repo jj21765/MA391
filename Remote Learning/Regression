@@ -1,0 +1,31 @@
+getwd()
+setwd("C:/Users/Lucas/Downloads")
+data = read.csv("InterestRatesBook.csv")
+print(data)
+plot(data$CM1)
+#to stick a whole column in r: cbind
+data = cbind(data, t = 1:37)
+print(data)
+#makes column t 
+
+#lm is linear model
+#~ means CM1 as a function of t
+model = lm(CM1~t, data = data)
+summary(model)
+#multiple R squared = the R^2 value
+
+#whatever letter us use after ~ use the same letter here
+newdata = data.frame(t=48)
+#to predict model , the interval = predict shows prediction interval
+predict(model, newdata,interval = "predict")
+#whats the 10.10? This is what the model is predicting for 48 months after the start of this problem? or whatevs 
+#the 10.10 value is the expected value when u put in the intercept value from the last summary(model) 
+boxplot(model$residuals)
+
+#how to use linear alg xhat
+a1 = matrix(1,nrow=37); print(a1)
+a2 = matrix(1:37); print(a2)  
+A = matrix(c(a1,a2),ncol=2); print(A)
+b = matrix(data$CM1);print(b)
+xhat = solve(t(A)%*%A, t(A)%*%b);print(xhat)
+#Ax = b doesnt solve so u multiply both sides by A transpose
