@@ -1,0 +1,45 @@
+##Step 1-input/setup the problem
+#p = prob of winning
+coinFlip = function(p,startMoney=10,maxMoney=20){
+  ## Initialization
+  state = startMoney
+  flipNumber = 0
+  record = data.frame(flip=0,money=state)
+  ## Run the game ##
+  while (state!=0 & state!=maxMoney){
+    U = runif(1)
+    if (U<p){state=state+1}else{state=state-1}
+    flipNumber = flipNumber+1
+    record = rbind(record,data.frame(flip=flipNumber,money=state))
+  }
+  ## Record data ##
+  if (flipNumber>=25){
+    oneGame = data.frame(win=0,money25=record$money[26],numFlips=flipNumber)
+  }
+  else{
+    oneGame = data.frame(win=0,money25=state,numFlips=flipNumber)
+  }
+  if (state==maxMoney){oneGame$win=1}
+  return(oneGame)
+}
+
+coinFlip(0.5)
+N = 3000;p=0.5;startMoney=10;maxMoney = 20
+#Initialize data frame without data
+results =
+  data.frame(win=as.numeric(),money25=as.numeric(),numFlips=as.numeric())
+for (i in 1:N){
+  oneGame = coinFlip(p,startMoney,maxMoney)
+  results =
+    rbind(results,data.frame(win=oneGame$win,money25=oneGame$money25,numFlips=oneGame$numFlips))
+}
+
+mean(results$win)
+sd(results$win)
+
+mean(results$numFlips)
+sd(results$numFlips)
+mean(results$money25)
+
+#CH9, PROBLEM 2
+
