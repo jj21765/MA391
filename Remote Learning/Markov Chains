@@ -1,0 +1,33 @@
+pnorm(70.5, 50, sqrt(50))-pnorm(34.5,50,sqrt(50))
+pnorm(275.5, 250, sqrt(250))-pnorm(224.5, 250, sqrt(250))
+
+x = seq(35,70)
+sum(dpois(x,50))
+
+pnorm(1.9)
+pnorm(2500,2360,73.7)
+
+#LSN 27
+P = matrix(c(.368, 0, .632, .368, .368, .632, .184, .368, .448), nrow=3, byrow=T);print(P)
+
+matrixPower = function(M,n){
+  M0 = M
+  if (n==0){return(diag(length(M[,1])))}
+  if (n==1){return(M)}
+  for (i in 2:n){
+    M = M%*%M0
+  }
+  return(M)
+}
+#this is how we're gonna do matrix multiplication 
+
+pi0 = c(1,0,0) ##state 1
+pi0%*%matrixPower(P,2)
+#the second numbe ris the number of steps 
+
+print(P)
+M = t(P)-diag(3);print(M)
+PI = rbind(M,c(1,1,1));print(P)
+b = matrix(c(0,0,0,1)); print(b)
+solve(t(PI)%*%PI, t(PI)%*%b)
+
