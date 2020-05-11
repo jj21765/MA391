@@ -1,0 +1,125 @@
+#chapter 9 problem 7
+
+#rainy day problem
+#if day is rainy, 75% chance that the next day will be rainy. 
+#if day is sunny, 75% chance that the next day will be sunny.
+#day zero was sunny.
+#Model as a markov chain and determine steady state probability that any future day will be rainy.
+#part a: determine the steady state probability that any future day will be rainy
+matrixPower=function(M,n){
+  M0=M
+  if (n==0){return(diag(length(M[,1])))}
+  if (n==1){return(M)}
+  for (i in 2:n){
+    M=M%*%M0
+  }
+  return(M)
+}
+W=matrix(c(.75,.25,.25,.75),nrow=2);print(W)
+pi0=c(1,0)
+pi0%*%matrixPower(W,1000)
+#This code shows that when modeling this system as a markov chain with two states; sunny and rainy, over time there is equal probability (50%) that any future day will be sunny or rainy
+#This gives steady state probabilities of 50%. 
+
+#part b: examine the probability of three consecutive days of rain using a monte carlo sim
+runif(1)
+#we will use runif to generate a random number, if greater than .75 the weather will change and if lower than it will not
+weather=function(x0,n){
+  d=0
+  if (x0==1){state=1} else{state=0}
+  data=data.frame(day=0,state=x0)
+  for (i in 1:n){
+    prob=runif(1)
+    d=d+1
+    if(prob<.75){state=state}else{if(state==0){state=1}else{state=0}}
+    data=rbind(data,data.frame(day=d,state=state))
+  }
+  return(data)
+}
+weather(1,10)
+
+#the function weather predicts the weather based off of the initial condition (sunny) and the probabilities from the problem
+#to find the probability of three consecutive sunny days we have to use this and have a function compute this scenario many times
+#we will assume that we only care about the probability that the three consecutive days of rain occur in a week (n=7), and that day 1 is sunny (x0=1)
+#add a column to weather tracking the number of rainy days in a given week
+weather=function(x0,n){
+  d=0
+  rainCount=0
+  if (x0==1){state=1} else{state=0}
+  data=data.frame(day=0,state=x0,rainCount=0)
+  for (i in 1:n){
+    prob=runif(1)
+    d=d+1
+    if(prob<.75){state=state}else{if(state==0){state=1}else{state=0}}
+    if (state==0){rainCount=rainCount+1}else{rainCount=0}
+    data=rbind(data,data.frame(day=d,state=state,rainCount=rainCount))
+  }
+  return(data)
+}
+weather(1,7)
+#now this generates a week of data and totals a rainCount throughout
+#changing the terms of iteration to end at either rainCount=3 OR n=7 makes the final rainCount the only one of significance
+weather=function(x0,n){
+  d=0
+  rainCount=0
+  if (x0==1){state=1} else{state=0}
+  data=data.frame(day=0,state=x0,rainCount=0)
+  while(rainCount!=3 & d!=7){
+    prob=runif(1)
+    d=d+1
+    if(prob<.75){state=state}else{if(state==0){state=1}else{state=0}}
+    if (state==0){rainCount=rainCount+1}else{rainCount=0}
+    data=rbind(data,data.frame(day=d,state=state,rainCount=rainCount))
+  }
+  return(rainCount)
+}
+weather(1,7)
+#this function returns only the rainCount, if it reaches 3 it cuts off. We can use this to simulate a week of weather occuring many times to find a steady state probability
+simulation=function(n){
+  rainy=0
+  rainTotal=0
+  for (i in 1:n){
+    rainCount=weather(1,7)
+    if (rainCount==3){rainy=1}else{rainy=0}
+    rainTotal=rainTotal+rainy
+  }
+  return(data.frame(simulations=n,rainyWeeks=rainTotal,probabiltyRainy=rainTotal/n))
+}
+simulation(100000)
+simulation(100000)
+simulation(100000)
+#the simulations above yield a consistent probabilityRainy=.48, meaning that there is a 48% chance of three consecutive days of rain in a week that starts off sunny.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
