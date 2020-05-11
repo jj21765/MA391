@@ -1,0 +1,57 @@
+p0 = (1-4.5/7.3)/(1-(4.5/7.3)^28)
+P = data.frame(state=0:27,P=round(p0*(4.5/7.3)^(0:27),4))
+print(P)
+
+#invert the exponential distribution -> rexp(1,rate) (exponential range of variants?)
+nextTime = function(n=1,rate){
+  #time when next event occurs, time until next event
+  return(-log(1-runif(n))/rate)
+  #what does runif do again: gets random variant from uniform distribution, if no parameters gives 0/1 
+  
+}
+
+x = nextTime(10000,100)
+hist(x)
+mean(x)
+#if lmabda is 100, what u expect: 1/100 (or 1/rate) for x
+#for mean, expect 100
+
+forkLift = function(lambda, mu, maxTime = 1000, numMechanics = 1){
+  clock = 0
+  state = 0
+  timeInStates = data.frame(state=0:27, time = matrix(0,nrow=28))
+  while(clock<maxTime){
+    if(state==0){
+      #State = 0
+      incState = nextTime(1,lambda)
+      deltaT = incState
+      deltaState = +1
+    }
+    else if (state==27){
+      #state = 27
+      decState = nextTime(1,mu)
+      deltaT = decState
+      deltaState = -1
+    }
+    else {
+      #state = 1-26
+      incState = nextTime(1,lambda)
+      decState = nextTime(1,mu)
+      deltaT = min(incState,decState)
+      if (deltaT == incState){deltaState = +1}else{deltaState = -1}
+    }
+    #concatonate? print i guess
+    cat("CurrTime: ", clock, " dT = ", deltaT, " Current State: ", state, "\n")
+    clock = clock+deltaT
+    currentState = which(timeInStates$state == state)  #index of our current state
+    timeInStates$time[currentState]=timeInStates$time[currentState]+deltaT
+    state = state+deltaState
+  }
+  timeInStates$distn=timeInStates$time/clock
+  return(timeInStates)
+}
+
+matrix(1,nrow=4)
+data=forkLift(4.5,7.3,10000)
+#this isf or one month
+print(data)
