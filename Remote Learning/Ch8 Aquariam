@@ -1,0 +1,32 @@
+#simulate aquarium problem from Ch8
+@step 1- set up the problem/simulation
+#what things do we want to have as input?? ####
+#step 2 - what do we want to record in order to answer the question??? ##
+
+#we need a random variate (what)
+data = rpois(10000,100)
+hist(data)
+
+#first number is how many i want, second number is the lambda, which is rate x time
+aquarium = function(lambda = 1, maxA = 3, weeks = 10000){
+  state = maxA
+  ans=data.frame(state=as.numeric(),demand=as.numeric(),lostBus = as.numeric())
+  
+  for (i in 1:weeks){
+    d = rpois(1,1)
+    ans = rbind(ans,data.frame(state=state,demand=d,lostBus=d>state))
+    state = state - d
+    if(state<=0){state=maxA}
+  }
+  print(ans)
+  #if it prints false, it means you are not gonna lose any business
+}
+
+N=1000
+lambda = 1
+maxA = 3
+aquarium(lambda,maxA,N)
+
+print(data$state)
+table(data$state)/N
+table(data$lostBus)/N
