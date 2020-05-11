@@ -1,0 +1,125 @@
+getwd()
+setwd("C:/Users/Lucas/Downloads")
+
+data <- read.csv("project2_data.csv")
+
+#PROBLEM 1
+
+D <- data$Range.Train.Time..hours.
+a2 <- matrix(D, nrow = length(D))
+a1 <- matrix(1,nrow=length(D))
+A <- matrix(c(a1,a2),ncol = 2)
+y1 = data$Time.for.a.Crew..To.Navigate.Course.min.
+b1 = matrix(y1,nrow=length(y1))
+xhat1 = solve(t(A)%*%A,t(A)%*%b1); print(xhat1)
+
+D <- data$Range.Train.Time..hours.
+a2 <- matrix(D, nrow = length(D))
+a1 <- matrix(1,nrow=length(D))
+A <- matrix(c(a1,a2),ncol = 2)
+y2 = data$Pass.Probability..Prob.of.Success.of.a.Crew.going.through.course.
+b2 = matrix(y2,nrow=length(y2))
+xhat2 = solve(t(A)%*%A,t(A)%*%b2); print(xhat2)
+
+model1 = lm(y1~a2)
+summary(model1)
+model2 = lm(y2~a2)
+summary(model2)
+
+(0.95-0.6511)/0.05
+(9.96-.688*5.978)
+
+#PROBLEM 2
+install.packages("EnvStats")
+library(EnvStats)
+variates <- rtri(10000,min = 7.96,max = 11.96,mode = 9.96)
+hist(variates)
+
+#PROBLEM 3
+qualify= function(p,maxcrew = 57){
+  ## Initialization
+  state = 0
+  attemptnum = 0
+  pass = 0
+  record = data.frame(atempt=0,pass=state)
+  ## Run the game ##
+  while (pass!=maxcrew){
+    U = runif(1)
+    if (U<p){
+      state=state+1
+      pass = pass +1
+    }
+    else{
+      state=state
+      pass = pass 
+      }
+    attemptnum = attemptnum+1
+    record = rbind(record,data.frame(atempt = attemptnum, pass=pass))
+  }
+  return(record)
+}
+
+qualify(0.95)
+
+#PROBLEM 4
+N = 100
+results = data.frame(runnumber = as.numeric(),trials = as.numeric(),totaltime = as.numeric(),pass = as.numeric())
+for(i in 1:N){
+  maxnum = qualify(0.99,57)
+  time = (maxnum*5.29997+(6.77108*60))/60
+  if(time<12){
+    go = 1
+  }else{go = 0}
+  results =
+    rbind(results,data.frame(runnumber = i, trials = maxnum, totaltime = time,pass = go))
+  print(results)
+}
+sum(results$pass)/N
+
+#PROBLEM 5
+p0 = (1-1.5/1)/(1-(1.5/1)^16)
+P = data.frame(state=0:15,P=round(p0*(1.5/1)^(0:10),4))
+print(P)
+
+nextTime = function(n=1,rate){
+  return(-log(1-runif(n))/rate)
+}
+x = nextTime(10000,100)
+hist(x)
+mean(x)
+
+tanks = function(lambda, mu, maxTime = 12){
+  clock = 0
+  state =9
+  timeInStates = data.frame(state=0:9, time = matrix(0,nrow=10))
+  while(clock<maxTime){
+    if(state==0){
+      #State = 0
+      incState = nextTime(1,lambda)
+      deltaT = incState
+      deltaState = +1
+    }
+    else if (state==9){
+      decState = nextTime(1,mu)
+      deltaT = decState
+      deltaState = -1
+    }
+    else {
+      incState = nextTime(1,lambda)
+      decState = nextTime(1,mu)
+      deltaT = min(incState,decState)
+      if (deltaT == incState){deltaState = +1}else{deltaState = -1}
+    }
+    cat("CurrTime: ", clock, " dT = ", deltaT, " Current State: ", state, "\n")
+    clock = clock+deltaT
+    currentState = which(timeInStates$state == state)  #index of our current state
+    timeInStates$time[currentState]=timeInStates$time[currentState]+deltaT
+    state = state+deltaState
+  }
+  timeInStates$distn=timeInStates$time/clock
+  return(timeInStates)
+}
+data=tanks(1.5,1,10000)
+print(data)
+sum(data$distn[4:10])
+print(P)
